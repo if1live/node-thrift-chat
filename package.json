@@ -1,0 +1,9 @@
+{
+  "name": "node-thrift-chat",
+  "description": "node.js + thrift => Chat",
+  "version": "0.0.1",
+  "private": false,
+  "dependencies": {
+    "thrift": "git+https://github.com/if1live/thrift.git"
+  }
+}
