@@ -14,4 +14,11 @@ results
 npm-debug.log
 node_modules
 
+# thrift
 gen-nodejs
+
+# bower
+bower_components
+
+# generated resource
+public/libs

@@ -3,7 +3,18 @@
   "description": "node.js + thrift => Chat",
   "version": "0.0.1",
   "private": false,
+  "scripts": {
+    "start": "./node_modules/.bin/coffee app.coffee"
+  },
   "dependencies": {
-    "thrift": "git+https://github.com/if1live/thrift.git"
+    "thrift": "git+https://github.com/if1live/thrift.git",
+    "express": "*",
+    "socket.io": "*",
+    "coffee-script": "*",
+    "coffee-middleware": "*",
+    "ejs": "*",
+    "grunt": "*",
+    "grunt-cli": "*",
+    "grunt-bowercopy": "*"
   }
 }
