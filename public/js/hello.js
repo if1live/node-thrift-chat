@@ -13,3 +13,11 @@ $('#btnDbl').click(function() {
   var val = client.dbl(25);
   document.getElementById("output2").innerHTML = val;
 });
+
+io = io.connect()
+
+io.emit('ready')
+
+io.on('new visitor', function() {
+  $('body').append('<p>New visitor, hooray! ' + new Date().toString() +'</p>')
+})
