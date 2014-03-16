@@ -1,5 +1,5 @@
 $('#btn').click(function() {
-  var transport = new Thrift.Transport("http://localhost:3000/hello");
+  var transport = new Thrift.Transport("/hello");
   var protocol  = new Thrift.Protocol(transport);
   var client = new HelloSvcClient(protocol);
   var msg = client.hello_func();
@@ -7,11 +7,19 @@ $('#btn').click(function() {
 });
 
 $('#btnDbl').click(function() {
-  var transport = new Thrift.Transport("http://localhost:3000/dbl");
+  var transport = new Thrift.Transport("/dbl");
   var protocol  = new Thrift.Protocol(transport);
   var client = new TimesTwoClient(protocol);
   var val = client.dbl(25);
   document.getElementById("output2").innerHTML = val;
+});
+
+$('#btn-chat').click(function() {
+  var transport = new Thrift.Transport('/chat');
+  var protocol = new Thrift.Protocol(transport);
+  var client = new ChatSvcClient(protocol);
+  var msg = client.send('name', 'msg');
+  alert(msg);
 });
 
 io = io.connect()

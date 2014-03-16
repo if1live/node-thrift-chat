@@ -5,42 +5,26 @@ TBufferedTransport = require('thrift/lib/thrift/transport').TBufferedTransport
 TJSONProtocol = require('thrift/lib/thrift/protocol').TJSONProtocol
 HelloSvc = require './gen-nodejs/HelloSvc.js'
 TimesTwoSvc = require './gen-nodejs/TimesTwo.js'
+ChatSvc = require './gen-nodejs/ChatSvc.js'
 
 # thrift hello
-helloHandler = {
-	hello_func: (result) ->
-		this.call_counter = this.call_counter || 0
-		console.log("Client call: " + (++this.call_counter));
-		result(null, "Hello Apache Thrift for JavaScript " + this.call_counter)
-}
 
-timesTwoHandler = {
+class BaseHandler
+  constructor: (req, res) ->
+    @req = req
+    @res = res
+
+class HelloHandler extends BaseHandler
+  @call_counter = 0
+
+  hello_func: (result) ->
+    console.log("Client call: " + (++HelloHandler.call_counter));
+    result(null, "Hello Apache Thrift for JavaScript " + HelloHandler.call_counter)
+
+class TimesTwoHandler extends BaseHandler
 	dbl: (val, result) ->
 		console.log("Client call: " + val)
 		result(null, val * 2)
-}
-
-helloService = {
-	transport: TBufferedTransport,
-	protocol: TJSONProtocol,
-	cls: HelloSvc,
-	handler: helloHandler
-}
-
-dblService = {
-	transport: TBufferedTransport,
-	protocol: TJSONProtocol,
-	cls: TimesTwoSvc,
-	handler: timesTwoHandler
-}
-
-ThriftServerOptions = {
-	staticFilePath: __dirname + "/public"
-	services: {
-		"/hello": helloService,
-		"/dbl": dblService,
-	}
-}
 
 # express.io
 app = express().http().io()
@@ -59,20 +43,28 @@ app.get '/', (req, res) ->
 app.get '/hello.html', (req, res) ->
   res.sendfile __dirname + '/public/hello.html'
 
-initThriftService = (app, options) ->
-  server = thrift.createWebServer options
-  for uri of options.services
-    app.post uri, (req, res) ->
-      svc = options.services[req.path]
-      req.on 'data', svc.transport.receiver (transportWithData) ->
-        input = new svc.protocol(transportWithData)
-        output = new svc.protocol new svc.transport undefined, (buf) ->
+class ThriftService
+  constructor: (@serviceCls, @handlerClass) ->
+
+  configure: (app, uri) ->
+    app.post uri, (req, res) =>
+      handler = new @handlerClass(req, res)
+
+      req.on 'data', TBufferedTransport.receiver (transportWithData) =>
+        input = new TJSONProtocol(transportWithData)
+        output = new TJSONProtocol new TBufferedTransport undefined, (buf) ->
           res.writeHead 200
           res.end buf
-        svc.processor.process(input, output)
 
+        processor = new @serviceCls.Processor(handler)
+        processor.process(input, output)
 
-initThriftService app, ThriftServerOptions
+helloService = new ThriftService(HelloSvc, HelloHandler)
+helloService.configure(app, '/hello')
+
+dblService = new ThriftService(TimesTwoSvc, TimesTwoHandler)
+dblService.configure(app, '/dbl')
+
 
 app.io.route 'ready', (req) ->
   req.io.broadcast 'new visitor'
