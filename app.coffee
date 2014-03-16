@@ -35,9 +35,6 @@ app.use express.static(__dirname + '/public')
 app.get '/', (req, res) ->
   res.sendfile __dirname + '/public/index.html'
 
-app.get '/hello.html', (req, res) ->
-  res.sendfile __dirname + '/public/hello.html'
-
 class ThriftService
   constructor: (@serviceCls, @handlerClass) ->
 
