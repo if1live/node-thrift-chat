@@ -1,8 +1,12 @@
 {
   "name": "node-thrift-chat",
-  "description": "node.js + thrift => Chat",
+  "description": "Chat example using Apache Thrift",
   "version": "0.0.1",
   "private": false,
+  "repository": {
+    "type": "git",
+    "url": "github.com/if1live/node-thrift-chat"
+  },
   "scripts": {
     "start": "./node_modules/.bin/coffee app.coffee"
   },
@@ -17,5 +21,8 @@
     "grunt-cli": "*",
     "grunt-bowercopy": "*",
     "grunt-shell": "*"
-  }
+  },
+  "keywords": [
+    "chat", "thrift", "chat", "example", "realtime"
+  ]
 }
