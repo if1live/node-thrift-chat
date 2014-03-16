@@ -12,6 +12,7 @@
     "socket.io": "*",
     "express.io": "*",
     "coffee-script": "*",
+    "moment": "*",
     "grunt": "*",
     "grunt-cli": "*",
     "grunt-bowercopy": "*",

@@ -3,9 +3,8 @@ path = require 'path'
 thrift = require 'thrift'
 TBufferedTransport = require('thrift/lib/thrift/transport').TBufferedTransport
 TJSONProtocol = require('thrift/lib/thrift/protocol').TJSONProtocol
-HelloSvc = require './gen-nodejs/HelloSvc.js'
-TimesTwoSvc = require './gen-nodejs/TimesTwo.js'
 ChatSvc = require './gen-nodejs/ChatSvc.js'
+moment = require 'moment'
 
 # thrift hello
 
@@ -14,19 +13,13 @@ class BaseHandler
     @req = req
     @res = res
 
-class HelloHandler extends BaseHandler
-  @call_counter = 0
-
-  hello_func: (result) ->
-    console.log("Client call: " + (++HelloHandler.call_counter));
-    result(null, "Hello Apache Thrift for JavaScript " + HelloHandler.call_counter)
-
-    @req.io.broadcast 'new visitor'
-
-class TimesTwoHandler extends BaseHandler
-	dbl: (val, result) ->
-		console.log("Client call: " + val)
-		result(null, val * 2)
+class ChatHandler extends BaseHandler
+  say: (name, msg, result) ->
+    now = moment().format('YY-MM-DD hh:mm:ss')
+    line = "#{now} : [#{name}] #{msg}"
+    console.log line
+    @req.io.broadcast 'say', {line: line}
+    result(null, true)
 
 # express.io
 app = express().http().io()
@@ -61,15 +54,8 @@ class ThriftService
         processor = new @serviceCls.Processor(handler)
         processor.process(input, output)
 
-helloService = new ThriftService(HelloSvc, HelloHandler)
-helloService.configure(app, '/hello')
-
-dblService = new ThriftService(TimesTwoSvc, TimesTwoHandler)
-dblService.configure(app, '/dbl')
-
-
-app.io.route 'ready', (req) ->
-  req.io.broadcast 'new visitor'
+chatService = new ThriftService(ChatSvc, ChatHandler)
+chatService.configure(app, '/chat')
 
 app.listen app.get 'port'
 console.log 'Express server listening on port ' + app.get 'port'
