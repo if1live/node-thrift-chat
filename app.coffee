@@ -42,7 +42,7 @@ ThriftServerOptions = {
 	}
 }
 
-# express.io X thrift
+# express.io
 app = express().http().io()
 
 app.set 'port', process.env.PORT || 3000
