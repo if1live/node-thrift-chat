@@ -64,14 +64,13 @@ initThriftService = (app, options) ->
   for uri of options.services
     app.post uri, (req, res) ->
       svc = options.services[req.path]
-      req.on('data', svc.transport.receiver (transportWithData) ->
+      req.on 'data', svc.transport.receiver (transportWithData) ->
         input = new svc.protocol(transportWithData)
-        output = new svc.protocol(new svc.transport(undefined, (buf) ->
+        output = new svc.protocol new svc.transport undefined, (buf) ->
           res.writeHead 200
           res.end buf
-        ))
         svc.processor.process(input, output)
-      )
+
 
 initThriftService app, ThriftServerOptions
 
