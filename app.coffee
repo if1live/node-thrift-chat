@@ -21,6 +21,8 @@ class HelloHandler extends BaseHandler
     console.log("Client call: " + (++HelloHandler.call_counter));
     result(null, "Hello Apache Thrift for JavaScript " + HelloHandler.call_counter)
 
+    @req.io.broadcast 'new visitor'
+
 class TimesTwoHandler extends BaseHandler
 	dbl: (val, result) ->
 		console.log("Client call: " + val)
