@@ -10,6 +10,13 @@
     <script src="/libs/jquery/jquery.min.js"></script>
     <script src="/libs/socket.io/socket.io.min.js"></script>
     <script>
+      io = io.connect()
+
+      io.emit('ready')
+
+      io.on('new visitor', function() {
+      $('body').append('<p>New visitor, hooray! ' + new Date().toString() +'</p>')
+      })
     </script>
   </body>
 </html>

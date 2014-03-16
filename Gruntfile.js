@@ -12,10 +12,22 @@ module.exports = function(grunt) {
           'public/libs/jquery': ['jquery/dist/*']
         }
       }
+    },
+    shell: {
+      thrift: {
+        command: [
+          'thrift -r --gen js:node shared/hello.thrift',
+          'thrift -r --gen js -o public shared/hello.thrift',
+        ].join('&&'),
+        options: {
+          stdout: true
+        }
+      }
     }
   });
 
   grunt.loadNpmTasks('grunt-bowercopy');
+  grunt.loadNpmTasks('grunt-shell');
 
-  grunt.registerTask('default', ['bowercopy']);
+  grunt.registerTask('default', ['shell', 'bowercopy']);
 };

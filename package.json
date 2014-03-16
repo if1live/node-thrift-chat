@@ -10,11 +10,11 @@
     "thrift": "git+https://github.com/if1live/thrift.git",
     "express": "*",
     "socket.io": "*",
+    "express.io": "*",
     "coffee-script": "*",
-    "coffee-middleware": "*",
-    "ejs": "*",
     "grunt": "*",
     "grunt-cli": "*",
-    "grunt-bowercopy": "*"
+    "grunt-bowercopy": "*",
+    "grunt-shell": "*"
   }
 }
