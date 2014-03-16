@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <title>Node.js + Apache Thrift => Chat</title>
+  </head>
+  <body>
+    <h1>Node.js + Apache Thrift => Chat</h1>
+
+    <h2>Say message</h2>
+    Name <input type="text" name="name"/><br/>
+    Message <input type="text" name="message"/>
+    <button class="btn-chat">chat</button>
+
+    <h2>Log</h2>
+    <ul class="log-list">
+    </ul>
+
+    <script src="/libs/jquery/jquery.min.js"></script>
+    <script src="/libs/socket.io/socket.io.min.js"></script>
+    <script src="/js/thrift.js" type="text/javascript"></script>
+    <script src="/gen-js/ChatSvc.js" type="text/javascript"></script>
+    <script src="/js/index.js"></script>
+  </body>
+</html>

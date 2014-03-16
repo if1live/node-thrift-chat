@@ -16,6 +16,8 @@ node_modules
 
 # thrift
 gen-nodejs
+gen-js
+
 
 # bower
 bower_components
