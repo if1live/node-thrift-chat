@@ -34,24 +34,21 @@ dblService = {
 	handler: timesTwoHandler
 }
 
-StaticHttpThriftServerOptions = {
-	staticFilePath: __dirname + "/public",
+ThriftServerOptions = {
+	staticFilePath: __dirname + "/public"
 	services: {
 		"/hello": helloService,
 		"/dbl": dblService,
 	}
 }
 
-
-server = thrift.createWebServer(StaticHttpThriftServerOptions);
-port = 8585;
-server.listen(port);
-console.log("Http/Thrift Server running on port: " + port);
-
-###
+# express.io X thrift
 app = express().http().io()
 
 app.set 'port', process.env.PORT || 3000
+app.use express.json()
+app.use express.urlencoded()
+app.use express.methodOverride()
 
 # static file
 app.use express.static(__dirname + '/public')
@@ -59,9 +56,27 @@ app.use express.static(__dirname + '/public')
 app.get '/', (req, res) ->
   res.sendfile __dirname + '/public/index.html'
 
+app.get '/hello.html', (req, res) ->
+  res.sendfile __dirname + '/public/hello.html'
+
+initThriftService = (app, options) ->
+  server = thrift.createWebServer options
+  for uri of options.services
+    app.post uri, (req, res) ->
+      svc = options.services[req.path]
+      req.on('data', svc.transport.receiver (transportWithData) ->
+        input = new svc.protocol(transportWithData)
+        output = new svc.protocol(new svc.transport(undefined, (buf) ->
+          res.writeHead 200
+          res.end buf
+        ))
+        svc.processor.process(input, output)
+      )
+
+initThriftService app, ThriftServerOptions
+
 app.io.route 'ready', (req) ->
   req.io.broadcast 'new visitor'
 
 app.listen app.get 'port'
 console.log 'Express server listening on port ' + app.get 'port'
-###
